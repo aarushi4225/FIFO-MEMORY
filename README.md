@@ -25,14 +25,23 @@ Roughly:
 10. When the read and write pointers catch up with each other, then depending on the direction, either flag should activate:
     - full flag: Indicates the FIFO is full, so data cannot be written unless something is read out.
     - empty flag: Indicates the FIFO is empty, so data can not be read.
-   
+
+
+# Code (main)
 ```verilog
-`timescale 1ns/10ms
+`timescale 1ns/1ps
 module fifo(
-  input cs, rd_en, wt_en, clk, input [31:0] data_in,
+  input cs, rd_en, wt_en, clk, rst
+  input [31:0] data_in,
   output reg flag_f, flag_em, output reg [31:0] data_out
   );
+  // internal variables (fifo depth = 16)
+  reg [31:0] mem [0:15];   // memory array (Width: 32-bit, Depth: 16)
+  reg [3:0] rd_ptr;        // Read pointer (4 bits to address 0-15)
+  reg [3:0] wr_ptr;        // Write pointer (4 bits to address 0-15)
+  reg [4:0] count;         // tracks no. of items to easily set flags
 
+  
+endmodule
 
-end
 ```
