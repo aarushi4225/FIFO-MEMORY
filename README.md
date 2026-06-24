@@ -14,14 +14,25 @@ The FSM manages this flow through a few key mechanisms:
 
 Roughly:
 1. Fifo has two operations - read and write. 
-2. CS signal : chip select should be one, to operate fifo
-3. Read enable : rd_en 1 for read allowing
-4. Write enable : wt_en 1 for write operation
-5. clk : clock
-6. data_in: the data we want to write in the memory.
-7. data_out : The data being read from the memory during a read operation.
+2. `CS` signal : chip select should be one, to operate fifo
+3. Read enable : `rd_en` 1 for read allowing
+4. Write enable : `wt_en` 1 for write operation
+5. clock : `clk`
+6. `data_in`: the data we want to write in the memory.
+7. `data_out` : The data being read from the memory during a read operation.
 8. read pointer : The internal address register pointing to the next memory location to be read.
 9. write pointer : The internal address register pointing to the next memory location to be written.
 10. When the read and write pointers catch up with each other, then depending on the direction, either flag should activate:
     - full flag: Indicates the FIFO is full, so data cannot be written unless something is read out.
     - empty flag: Indicates the FIFO is empty, so data can not be read.
+   
+```verilog
+`timescale 1ns/10ms
+module fifo(
+  input cs, rd_en, wt_en, clk, input [31:0] data_in,
+  output reg flag_f, flag_em, output reg [31:0] data_out
+  );
+
+
+end
+```
