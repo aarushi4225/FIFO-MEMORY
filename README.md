@@ -34,15 +34,15 @@ Roughly:
 `timescale 1ns/1ps
 module fifo
 # (parameter W = 32, D = 16)
-  (input cs, rd_en, wt_en, clk, rst
+  (input cs, rd_en, wt_en, clk, rst,
   input [W-1:0] data_in,
   output reg full, empty, output reg [W-1:0] data_out
   );
   // internal variables 
   reg [W-1:0] mem [0:D-1];   // memory array (Width: 32-bit, Depth: 16)
-  reg [$clog(D)-1:0] rd_ptr;        // Read pointer (4 bits to address 0-15)
-  reg [$clog(D)-1:0] wr_ptr;        // Write pointer (4 bits to address 0-15)
-  reg [$clog(D):0] count;         // tracks no. of items to easily set flags
+  reg [$clog2(D)-1:0] rd_ptr;        // Read pointer (4 bits to address 0-15)
+  reg [$clog2(D)-1:0] wr_ptr;        // Write pointer (4 bits to address 0-15)
+  reg [$clog2(D):0] count;         // tracks no. of items to easily set flags
 
   // loop declaration for writing
   always @ (posedge clk) begin
@@ -50,7 +50,7 @@ module fifo
       wr_ptr <= 0;
     end
     else begin
-      if (wt_en & !full) begin
+      if (cs & wt_en & !full) begin
         mem[wr_ptr] <= data_in;
         wr_ptr <= wr_ptr + 1;
       end
