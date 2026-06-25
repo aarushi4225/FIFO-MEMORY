@@ -36,28 +36,46 @@ module fifo
 # (parameter W = 32, D = 16)
   (input cs, rd_en, wt_en, clk, rst,
   input [W-1:0] data_in,
-  output reg full, empty, output reg [W-1:0] data_out
-  );
-  // internal variables 
-  reg [W-1:0] mem [0:D-1];   // memory array (Width: 32-bit, Depth: 16)
-  reg [$clog2(D)-1:0] rd_ptr;        // Read pointer (4 bits to address 0-15)
-  reg [$clog2(D)-1:0] wr_ptr;        // Write pointer (4 bits to address 0-15)
-  reg [$clog2(D):0] count;         // tracks no. of items to easily set flags
+  output full, empty,
+  output reg [W-1:0] data_out);
 
-  // loop declaration for writing
+  // internal variables 
+  reg [W-1:0] mem [0:D-1];   
+  reg [$clog2(D)-1:0] rd_ptr;        
+  reg [$clog2(D)-1:0] wr_ptr;        
+  reg [$clog2(D):0] count;           
+
   always @ (posedge clk) begin
-    if (!rst) begin // considering active-low reset
+    if (!rst) begin 
       wr_ptr <= 0;
+      rd_ptr <= 0;
+      count  <= 0;
     end
-    else begin
-      if (cs & wt_en & !full) begin
+    else if (cs) begin
+      // Write logic
+      if (wt_en & !full) begin
         mem[wr_ptr] <= data_in;
         wr_ptr <= wr_ptr + 1;
       end
+      
+      // Read logic
+      if (rd_en & !empty) begin
+        data_out <= mem[rd_ptr];
+        rd_ptr <= rd_ptr + 1;
+      end
+
+      // Count logic to determine flag
+      case ({wt_en & !full, rd_en & !empty})
+        2'b10: count <= count + 1; // Write only
+        2'b01: count <= count - 1; // Read only
+        default: count <= count;
+      endcase
     end
   end
 
-  // 
+  
+  assign full = (count == D);
+  assign empty = (count == 0);
+  
 endmodule
-
 ```
