@@ -1,5 +1,3 @@
-# RTL Code 
-```verilog
 `timescale 1ns/1ps
 module synchronous_fifo
 # (parameter W = 32, D = 16)
@@ -47,4 +45,3 @@ module synchronous_fifo
   assign empty = (count == 0);
   
 endmodule
-```
