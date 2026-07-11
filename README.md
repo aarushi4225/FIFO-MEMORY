@@ -28,6 +28,3 @@ Elaborately:
 11. Width and Depth of FIFO : Width refers to the no. of bits that can be stored in a single entry, while Depth refers to the number of entries which can be accomodated in the memory buffer.
 12. Depth Calculation :    Depth = (Writing Rate - Reading Rate)/Clock Frequency
 
-
-endmodule
-```
